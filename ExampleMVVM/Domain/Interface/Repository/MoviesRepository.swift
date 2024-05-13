@@ -11,6 +11,5 @@ protocol MoviesRepository {
     func fetchMoviesList(
         query: MovieQuery,
         page: Int
-//        cached: @escaping (MoviesPage) -> Void,
     ) async throws -> MoviesPage 
 }

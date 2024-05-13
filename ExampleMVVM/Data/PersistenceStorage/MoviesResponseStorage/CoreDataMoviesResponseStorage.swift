@@ -25,8 +25,6 @@ final class CoreDataMoviesResponseStorage {
                                         #keyPath(MoviesRequestEntity.query), requestDto.query,
                                         #keyPath(MoviesRequestEntity.page), requestDto.page)
         
-        request.fetchLimit = 1
-        
         return request
     }
     
