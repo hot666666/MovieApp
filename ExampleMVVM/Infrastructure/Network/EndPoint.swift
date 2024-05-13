@@ -80,7 +80,7 @@ class Endpoint<R>: ResponseRequestable {
 
 extension Requestable {
     
-    private func url(with config: NetworkConfigurable) throws -> URL {
+    func url(with config: NetworkConfigurable) throws -> URL {
 
         let baseURL = config.baseURL.absoluteString.last != "/"
         ? config.baseURL.absoluteString + "/"
