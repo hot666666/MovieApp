@@ -19,7 +19,7 @@ final class CoreDataStorage {
     
     // MARK: - Core Data stack
     private lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "CoreDataStorage")
+        let container = NSPersistentContainer(name: "CoreDataStorage1")
         container.loadPersistentStores { _, error in
             if let error = error as NSError? {
                 // TODO: - Log to Crashlytics
