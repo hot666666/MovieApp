@@ -19,4 +19,13 @@ extension String {
         }()
         return dateFormatter.date(from: self)
     }
+    
+    func trimmed(to length: Int = 200) -> String {
+        if self.count > length {
+            let index = self.index(self.startIndex, offsetBy: length)
+            return "\(self[..<index])..."
+        } else {
+            return self
+        }
+    }
 }
