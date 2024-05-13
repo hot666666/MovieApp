@@ -17,6 +17,15 @@ class DIContainer: ObservableObject {
         self.navigationRouter = navigationRouter
     }
     
+    // MARK: - Provider
+    lazy var posterImageUrlProvider: PosterImageUrlProvider = {
+        let config = ApiDataNetworkConfig(
+            baseURL: URL(string: appConfiguration.imageBaseURL)!
+        )
+       return DefaultPosterImageUrlProvider(networkConfigurable: config)
+    }()
+    
+    // MARK: - Service
     lazy var apiDataTransferService: DataTransferService = {
         let config = ApiDataNetworkConfig(
             baseURL: URL(string: appConfiguration.apiBaseURL)!,
@@ -30,10 +39,30 @@ class DIContainer: ObservableObject {
         return DefaultDataTransferService(with: apiDataNetwork)
     }()
     
-    lazy var moviesRepository: DefaultMoviesRepository = {
-        let coreDataStorage = CoreDataStorage.shared
-        return DefaultMoviesRepository(dataTransferService: self.apiDataTransferService, 
-                                       cache: CoreDataMoviesResponseStorage(coreDataStorage: coreDataStorage))
+    // MARK: - Persistent Storage
+    lazy var moviesQueriesStorage: MoviesQueriesStorage = CoreDataMoviesQueriesStorage(maxStorageLimit: 10)
+    lazy var moviesResponseCache: MoviesResponseStorage = CoreDataMoviesResponseStorage()
+    
+    // MARK: - Repositories
+    lazy var moviesRepository: MoviesRepository = {
+        DefaultMoviesRepository(
+            dataTransferService: apiDataTransferService,
+            cache: moviesResponseCache
+        )
+    }()
+    lazy var moviesQueriesRepository: MoviesQueriesRepository = {
+       DefaultMoviesQueriesRepository(moviesQueriesPersistentStorage: moviesQueriesStorage)
+    }()
+    lazy var posterImageRepository: PosterImagesRepository = {
+        DefaultPosterImagesRepository(dataTransferService: apiDataTransferService)
     }()
     
+    // MARK: - Use Cases
+    lazy var searchMoviesUseCase: DefaultSearchMoviesUseCase = {
+        DefaultSearchMoviesUseCase(moviesRepository: moviesRepository, moviesQueriesRepository: moviesQueriesRepository)
+    }()
+    
+    lazy var moviesQueriesUseCase: FetchRecentMovieQueriesUseCase = {
+        FetchRecentMovieQueriesUseCase(requestValue: .init(maxCount: 10), moviesQueriesRepository: moviesQueriesRepository)
+    }()
 }

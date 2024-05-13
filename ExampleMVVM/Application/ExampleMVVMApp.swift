@@ -13,7 +13,7 @@ struct ExampleMVVMApp: App {
     
     var body: some Scene {
         WindowGroup {
-            MoviesListView(container: container)
+            MoviesListView(moviesListVM: .init(container: container), movieQueriesListVM: .init(container: container))
         }
         .environmentObject(container)
     }
