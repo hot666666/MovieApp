@@ -25,6 +25,7 @@ protocol DataTransferErrorLogger {
 final class DefaultDataTransferService {
     /// DataTransferService는 NetworkService를 주입받고
     /// 이와 비슷한 형식으로, ErrorResolver와 ErrorLogger를 주입한다
+    /// 작업 시, EndPoint 객체를 인자로 사용
     
     private let networkService: NetworkService
     private let errorResolver: DataTransferErrorResolver

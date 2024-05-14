@@ -8,6 +8,7 @@
 import Foundation
 
 struct APIEndpoints {
+    /// 실제 네트워크 요청에 사용되는 Endpoint 객체를 반환
     
     static func getMovies(with moviesRequestDTO: MoviesRequestDTO) -> Endpoint<MoviesResponseDTO> {
 
