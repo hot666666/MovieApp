@@ -26,7 +26,7 @@ struct MoviesPage: Equatable {
 extension Movie {
     static func stub(id: Movie.Identifier = "id1",
                      title: String = "title1",
-                     posterPath: String? = "/1",
+                     posterPath: String? = "/6m0rG2bS90FOlUaxEq8ZPCTQMei.jpg",
                      overview: String = "overview1",
                      releaseDate: Date? = Date.now) -> Self {
         Movie(id: id,
