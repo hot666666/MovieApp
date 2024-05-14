@@ -15,6 +15,7 @@ class DIContainer: ObservableObject {
          navigationRouter: NavigationRoutable & ObservableObjectSettable = NavigationRouter()) {
         self.appConfiguration = appConfiguration
         self.navigationRouter = navigationRouter
+        self.navigationRouter.setObjectWillChange(objectWillChange)
     }
     
     // MARK: - Provider
@@ -53,9 +54,6 @@ class DIContainer: ObservableObject {
     lazy var moviesQueriesRepository: MoviesQueriesRepository = {
        DefaultMoviesQueriesRepository(moviesQueriesPersistentStorage: moviesQueriesStorage)
     }()
-    lazy var posterImageRepository: PosterImagesRepository = {
-        DefaultPosterImagesRepository(dataTransferService: apiDataTransferService)
-    }()
     
     // MARK: - Use Cases
     lazy var searchMoviesUseCase: DefaultSearchMoviesUseCase = {
@@ -65,4 +63,10 @@ class DIContainer: ObservableObject {
     lazy var moviesQueriesUseCase: FetchRecentMovieQueriesUseCase = {
         FetchRecentMovieQueriesUseCase(requestValue: .init(maxCount: 10), moviesQueriesRepository: moviesQueriesRepository)
     }()
+}
+
+extension DIContainer{
+    static var stub: DIContainer {
+        .init()
+    }
 }
