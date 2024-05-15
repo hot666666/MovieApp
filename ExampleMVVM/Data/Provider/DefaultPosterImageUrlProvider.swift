@@ -7,6 +7,10 @@
 
 import Foundation
 
+protocol PosterImageUrlProvider {
+    func getURL(posterURL: String, width: Int) throws -> URL
+}
+
 final class DefaultPosterImageUrlProvider {
     private let networkConfigurable: NetworkConfigurable
     
