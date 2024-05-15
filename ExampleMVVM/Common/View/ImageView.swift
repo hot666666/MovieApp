@@ -12,11 +12,13 @@ struct ImageView: View {
     var alignment: Alignment = .center
     
     var body: some View {
-        VStack{
-            AsyncImage(url: url) { image in
+        AsyncImage(url: url) { phase in
+            if let image = phase.image {
                 image.resizable()
                     .aspectRatio(contentMode: .fit)
-            } placeholder: {
+            } else if phase.error != nil {  /// Indicates an error
+                Image(systemName: "photo")
+            } else {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
             }
