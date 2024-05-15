@@ -1,7 +1,7 @@
 # ExampleMVVM
 
-- [레포지터리](https://github.com/kudoleh/iOS-Clean-Architecture-MVVM)를 참고하여 구현
-- 기존 코드와 다르게, SwiftUI, Swift Concurrency, Combine을 사용하여 구현
+- [iOS-Clean-Architecture-MVVM](https://github.com/kudoleh/iOS-Clean-Architecture-MVVM) 참고
+- 기존과 다르게 SwiftUI, Combine, Swift Concurrency을 사용하여 구현
 
 ## Demo
 
