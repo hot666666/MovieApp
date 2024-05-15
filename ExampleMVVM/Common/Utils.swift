@@ -12,3 +12,7 @@ func printIfDebug(_ string: String) {
     print(string)
     #endif
 }
+
+func delaySeconds(secs: Double) async{
+    try? await Task.sleep(nanoseconds: UInt64(1_000_000_000 * secs))
+}

@@ -12,6 +12,7 @@ class MoviesHomeViewModel: ObservableObject{
     private var posterImageUrlProvider: PosterImageUrlProvider
     
     @Published var isLoading: Bool = false
+    @Published var isLoadingMore: Bool = false
     
     @Published var text: String = ""
     @Published var isFocusedSearchBar: Bool = false
@@ -40,6 +41,7 @@ class MoviesHomeViewModel: ObservableObject{
         
         do{
             isLoading = true
+            await delaySeconds(secs: 0.5)
             let res = try await useCase.execute(requestValue: SearchMoviesUseCaseRequestValue(query: MovieQuery(query: text), page: page))
             page += 1
             totalPages = res.totalPages
@@ -52,7 +54,7 @@ class MoviesHomeViewModel: ObservableObject{
     @MainActor
     func searchMore() async {
         defer {
-            isLoading = false
+            isLoadingMore = false
         }
         
         if page > totalPages {
@@ -60,7 +62,8 @@ class MoviesHomeViewModel: ObservableObject{
         }
         
         do {
-            isLoading = true
+            isLoadingMore = true
+            await delaySeconds(secs: 0.5)
             let res = try await useCase.execute(requestValue: SearchMoviesUseCaseRequestValue(query: MovieQuery(query: text), page: page))
             page += 1
             movies.append(contentsOf: res.movies)
