@@ -9,7 +9,7 @@ import SwiftUI
 
 struct HeaderView: View {
     var title: String?
-    var buttonAction: DismissAction? = nil
+    var buttonAction: (() -> Void)? = nil
     
     var body: some View {
         VStack{

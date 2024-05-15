@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MoviesDetailsView: View {
-    @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var container: DIContainer
 
     var movie: Movie
     var url: URL?
@@ -20,11 +20,12 @@ struct MoviesDetailsView: View {
     
     var body: some View {
         VStack(spacing: 0){
-            HeaderView(title: movie.title, buttonAction: dismiss)
+            HeaderView(title: movie.title, buttonAction: container.navigationRouter.pop)
             VStack{
                 ImageView(url: url)
                     .frame(width: Screen.detailWidth, height: Screen.detailHeight, alignment: .top)
                 Text(movie.overview ?? "")
+                    .multilineTextAlignment(.leading)
                 
                 Spacer()
             }
