@@ -17,8 +17,8 @@ struct MoviesQueryListView: View {
             List(movieQueriesVM.queries, id:\.self){ item in
                 Button(action: {
                     Task{
-                        await movieListVM.search(selectedQuery: item.query)
                         defocus()
+                        await movieListVM.search(selectedQuery: item.query)
                     }
                 }, label: {
                     Text(item.query)
