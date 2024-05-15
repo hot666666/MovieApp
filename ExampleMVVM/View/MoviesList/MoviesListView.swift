@@ -12,25 +12,32 @@ struct MoviesListView: View {
     @ObservedObject var moviesHomeVM: MoviesHomeViewModel
     
     var body: some View {
-        List(moviesHomeVM.movies, id: \.id){ movie in
-            Button(action: {
-                container.navigationRouter.destinations.append(.detail(movie: movie, url: getURLForDetail(movie: movie)))
-            }, label: {
-                MoviesListCellView(movie: movie, url: getURLForCell(movie: movie))
-                    .task {
-                        if movie == moviesHomeVM.movies.last {
-                            await moviesHomeVM.searchMore()
-                        }
-                    }
-            })
+        ScrollView {
+            Divider()
+            LazyVStack {
+                ForEach(moviesHomeVM.movies, id: \.id){ movie in
+                    Button(action: {
+                        container.navigationRouter.destinations.append(.detail(movie: movie, url: getURLForDetail(movie: movie)))
+                    }, label: {
+                        MoviesListCellView(movie: movie, url: getURLForCell(movie: movie))
+                            .task {
+                                if movie == moviesHomeVM.movies.last {
+                                    await moviesHomeVM.searchMore()
+                                }
+                            }
+                    })
+                }
+                if moviesHomeVM.isLoadingMore {
+                    ProgressView()
+                }
+            }
         }
         .overlay{
-            if moviesHomeVM.movies.isEmpty{
+            if moviesHomeVM.movies.isEmpty && !moviesHomeVM.isLoading {
                 Text("Search results")
             }
             if moviesHomeVM.isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                LoadingView()
             }
         }
         .foregroundColor(ColorTheme.primaryText)
@@ -50,30 +57,45 @@ struct MoviesListCellView: View {
     var url: URL?
     
     var body: some View {
-        HStack{
-            VStack(alignment: .leading, spacing: 5){
-                Text(movie.title ?? "")
-                    .font(.headline)
-                    .bold()
-                Text("Release Date: \(movie.releaseDate?.toString() ?? "")")
-                    .font(.subheadline)
-                Text(movie.overview?.trimmed() ?? "")
-                    .foregroundStyle(.secondary)
+        VStack {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(movie.title ?? "")
+                        .font(.headline)
+                        .bold()
+                    Text("Release Date: \(movie.releaseDate?.toString() ?? "")")
+                        .font(.subheadline)
+                    Text(movie.overview?.trimmed() ?? "")
+                        .foregroundStyle(.secondary)
+                }
+                .multilineTextAlignment(.leading)
+                
+                Spacer()
+                
+                ImageView(url: url, alignment: .top)
+                    .frame(maxWidth: Screen.cellWidth)
             }
+            .padding(.vertical, 10)
+            .padding(.horizontal, 20)
             
-            Spacer()
-            
-            ImageView(url: url, alignment: .top)
-                .frame(maxWidth: Screen.cellWidth)
+            Divider()
         }
     }
 }
 
-#Preview {
+// TODO: - Item이 존재하는 경우 Preview
+#Preview("MoviesListView") {
     let container: DIContainer = .stub
     let moviesListVM: MoviesHomeViewModel = .init(container: container)
     return MoviesListView(moviesHomeVM: moviesListVM)
         .environmentObject(container)
 }
 
-// TODO: - Item이 존재하는 경우 Preview
+#Preview("MoviesCellView") {
+    let movie: Movie = .stub()
+    let container: DIContainer = .init()
+    let provider = container.posterImageUrlProvider
+    let url = try? provider.getURL(posterURL: movie.posterPath!, width: 200)
+    
+    return MoviesListCellView(movie: movie, url: url)
+}
