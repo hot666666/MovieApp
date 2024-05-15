@@ -9,8 +9,8 @@ import SwiftUI
 
 struct MoviesHomeView: View {
     @EnvironmentObject private var container: DIContainer
-    @ObservedObject var moviesHomeVM: MoviesHomeViewModel
-    @ObservedObject var movieQueriesListVM: MoviesQueryListViewModel
+    @StateObject var moviesHomeVM: MoviesHomeViewModel
+    @StateObject var movieQueriesListVM: MoviesQueryListViewModel
     @FocusState private var isTextFieldFocused: Bool
     
     var body: some View {
@@ -65,9 +65,3 @@ struct MoviesHomeView: View {
     return MoviesHomeView(moviesHomeVM: .init(container: container), movieQueriesListVM: .init(container: container))
         .environmentObject(container)
 }
-
-//#Preview("MoviesListCellView") {
-//    MoviesListCellView(movie: .stub()) { str, int in
-//        return nil
-//    }
-//}
