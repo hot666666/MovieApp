@@ -110,3 +110,17 @@ final class DefaultNetworkErrorLogger: NetworkErrorLogger {
         printIfDebug("\(error)")
     }
 }
+
+// MARK: - NetworkError extension
+
+extension NetworkError {
+    var isNotFoundError: Bool { return hasStatusCode(404) }
+    
+    func hasStatusCode(_ codeError: Int) -> Bool {
+        switch self {
+        case let .error(code, _):
+            return code == codeError
+        default: return false
+        }
+    }
+}
