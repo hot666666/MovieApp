@@ -29,18 +29,43 @@ extension CoreDataMoviesQueriesStorage: MoviesQueriesStorage {
             let request: NSFetchRequest = MovieQueryEntity.fetchRequest()
             request.sortDescriptors = [NSSortDescriptor(key: #keyPath(MovieQueryEntity.createdAt),
                                                         ascending: false)]
-            request.fetchLimit = maxCount
-            let result = try context.fetch(request).map { $0.toDomain() }
-            return result
+            do{
+                request.fetchLimit = maxCount
+                let result = try context.fetch(request).map { $0.toDomain() }
+                return result
+            } catch {
+                throw CoreDataStorageError.readError(error)
+            }
         }
     }
     
     func saveRecentQuery(query: MovieQuery) async throws -> MovieQuery {
-        return try await coreDataStorage.performBackgroundTask { context in
-            try self.cleanUpQueries(for: query, inContext: context)
-            let entity = MovieQueryEntity(movieQuery: query, insertInto: context)
-            try context.save()
-            return entity.toDomain()
+        do {
+            return try await coreDataStorage.performBackgroundTask { context in
+                try self.cleanUpQueries(for: query, inContext: context)
+                let entity = MovieQueryEntity(movieQuery: query, insertInto: context)
+                try context.save()
+                return entity.toDomain()
+            }
+        } catch {
+            throw CoreDataStorageError.saveError(error)
+        }
+    }
+    
+    func removeQuery(query: MovieQuery) async throws {
+        try await coreDataStorage.performBackgroundTask { context in
+            let request: NSFetchRequest<MovieQueryEntity> = MovieQueryEntity.fetchRequest()
+            request.predicate = NSPredicate(format: "query == %@", query.query)
+            
+            do {
+                let results = try context.fetch(request)
+                for result in results {
+                    context.delete(result)
+                }
+                try context.save()
+            } catch {
+                throw CoreDataStorageError.removeError(error)
+            }
         }
     }
 }
