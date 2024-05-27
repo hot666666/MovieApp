@@ -19,7 +19,7 @@ struct APIEndpoints {
         )
     }
 
-    static func getMoviePoster(path: String, width: Int) -> Endpoint<Data> {
+    static func getMoviePosterFullUrl(path: String, width: Int) -> Endpoint<Data> {
 
         let sizes = [92, 154, 185, 342, 500, 780]
         let closestWidth = sizes
