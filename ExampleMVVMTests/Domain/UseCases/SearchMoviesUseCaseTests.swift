@@ -22,13 +22,18 @@ class SearchMoviesUseCaseTests: XCTestCase {
         case failedFetching
     }
     
-    class MoviesQueriesRepositoryMock: MoviesQueriesRepository {
+    class MoviesQueryRepositoryMock: MoviesQueryRepository {
         var recentQueries: [MovieQuery] = []
         var fetchRecentsQueriesCallsCount = 0
+        var removeQueryCallsCount = 0
         
         func fetchRecentsQueries(maxCount: Int) async throws -> [MovieQuery] {
             fetchRecentsQueriesCallsCount += 1
             return recentQueries
+        }
+        
+        func removeQuery(query: MovieQuery) async throws {
+            removeQueryCallsCount += 1
         }
         
         func saveRecentQuery(query: MovieQuery) async throws -> MovieQuery {
@@ -56,7 +61,7 @@ class SearchMoviesUseCaseTests: XCTestCase {
     
     func testSearchMoviesUseCase_whenSuccessfullyFetchesMoviesForQuery_thenQueryIsSavedInRecentQueries() async throws {
         // given
-        let moviesQueriesRepository = MoviesQueriesRepositoryMock()
+        let moviesQueriesRepository = MoviesQueryRepositoryMock()
         let moviesRepository = MoviesRepositoryMock(result: SearchMoviesUseCaseTests.moviesPages[0])
         
         let useCase = DefaultSearchMoviesUseCase(
@@ -88,7 +93,7 @@ class SearchMoviesUseCaseTests: XCTestCase {
     
     func testSearchMoviesUseCase_whenFailedFetchingMoviesForQuery_thenQueryIsNotSavedInRecentQueries() async throws {
         // given
-        let moviesQueriesRepository = MoviesQueriesRepositoryMock()
+        let moviesQueriesRepository = MoviesQueryRepositoryMock()
         let moviesRepository = MoviesRepositoryMock(result: nil)
         
         let useCase = DefaultSearchMoviesUseCase(
