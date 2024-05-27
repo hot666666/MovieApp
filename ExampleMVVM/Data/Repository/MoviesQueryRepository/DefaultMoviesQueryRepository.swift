@@ -9,24 +9,24 @@ import Foundation
 
 final class DefaultMoviesQueryRepository {
     
-    private var moviesQueriesPersistentStorage: MoviesQueriesStorage
+    private var moviesQueryPersistentStorage: MoviesQueryStorage
     
-    init(moviesQueriesPersistentStorage: MoviesQueriesStorage) {
-        self.moviesQueriesPersistentStorage = moviesQueriesPersistentStorage
+    init(moviesQueryPersistentStorage: MoviesQueryStorage) {
+        self.moviesQueryPersistentStorage = moviesQueryPersistentStorage
     }
 }
 
 extension DefaultMoviesQueryRepository: MoviesQueryRepository {
     
     func fetchRecentsQueries(maxCount: Int) async throws -> [MovieQuery] {
-        try await moviesQueriesPersistentStorage.fetchRecentsQueries(maxCount: maxCount)
+        try await moviesQueryPersistentStorage.fetchRecentsQueries(maxCount: maxCount)
     }
     
     func saveRecentQuery(query: MovieQuery) async throws -> MovieQuery {
-        try await moviesQueriesPersistentStorage.saveRecentQuery(query: query)
+        try await moviesQueryPersistentStorage.saveRecentQuery(query: query)
     }
     
     func removeQuery(query: MovieQuery) async throws {
-        try await moviesQueriesPersistentStorage.removeQuery(query: query)
+        try await moviesQueryPersistentStorage.removeQuery(query: query)
     }
 }

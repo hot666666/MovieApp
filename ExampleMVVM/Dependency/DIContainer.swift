@@ -40,7 +40,7 @@ class DIContainer: ObservableObject {
     }()
     
     // MARK: - Persistent Storage
-    lazy var moviesQueriesStorage: MoviesQueriesStorage = CoreDataMoviesQueriesStorage(maxStorageLimit: 10)
+    lazy var moviesQueryStorage: MoviesQueryStorage = CoreDataMoviesQueryStorage(maxStorageLimit: 10)
     lazy var moviesResponseCache: MoviesResponseStorage = CoreDataMoviesResponseStorage()
     
     // MARK: - Repositories
@@ -51,7 +51,7 @@ class DIContainer: ObservableObject {
         )
     }()
     lazy var moviesQueriesRepository: MoviesQueryRepository = {
-       DefaultMoviesQueryRepository(moviesQueriesPersistentStorage: moviesQueriesStorage)
+       DefaultMoviesQueryRepository(moviesQueryPersistentStorage: moviesQueryStorage)
     }()
     
     // MARK: - Use Cases

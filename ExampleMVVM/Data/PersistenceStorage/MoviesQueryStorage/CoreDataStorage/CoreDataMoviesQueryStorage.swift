@@ -8,7 +8,7 @@
 import Foundation
 import CoreData
 
-final class CoreDataMoviesQueriesStorage {
+final class CoreDataMoviesQueryStorage {
 
     private let maxStorageLimit: Int
     private let coreDataStorage: CoreDataStorage
@@ -22,7 +22,7 @@ final class CoreDataMoviesQueriesStorage {
     }
 }
 
-extension CoreDataMoviesQueriesStorage: MoviesQueriesStorage {
+extension CoreDataMoviesQueryStorage: MoviesQueryStorage {
     
     func fetchRecentsQueries(maxCount: Int) async throws -> [MovieQuery] {
         return try await coreDataStorage.performBackgroundTask { context in
@@ -71,7 +71,7 @@ extension CoreDataMoviesQueriesStorage: MoviesQueriesStorage {
 }
 
 // MARK: - Private
-extension CoreDataMoviesQueriesStorage {
+extension CoreDataMoviesQueryStorage {
 
     private func cleanUpQueries(for query: MovieQuery, inContext context: NSManagedObjectContext) throws {
         let request: NSFetchRequest = MovieQueryEntity.fetchRequest()
