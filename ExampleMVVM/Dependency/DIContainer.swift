@@ -18,14 +18,6 @@ class DIContainer: ObservableObject {
         self.navigationRouter.setObjectWillChange(objectWillChange)
     }
     
-    // MARK: - Provider
-    lazy var posterImageUrlProvider: PosterImageUrlProvider = {
-        let config = ApiDataNetworkConfig(
-            baseURL: URL(string: appConfiguration.imageBaseURL)!
-        )
-       return DefaultPosterImageUrlProvider(networkConfigurable: config)
-    }()
-    
     // MARK: - Service
     lazy var apiDataTransferService: DataTransferService = {
         let config = ApiDataNetworkConfig(
@@ -39,6 +31,13 @@ class DIContainer: ObservableObject {
         let apiDataNetwork = DefaultNetworkService(config: config)
         return DefaultDataTransferService(with: apiDataNetwork)
     }()
+
+    lazy var posterImageUrlService: PosterImageUrlService = {
+        let config = ApiDataNetworkConfig(
+            baseURL: URL(string: appConfiguration.imageBaseURL)!
+        )
+       return DefaultPosterImageUrlService(networkConfigurable: config)
+    }()
     
     // MARK: - Persistent Storage
     lazy var moviesQueriesStorage: MoviesQueriesStorage = CoreDataMoviesQueriesStorage(maxStorageLimit: 10)
@@ -51,8 +50,8 @@ class DIContainer: ObservableObject {
             cache: moviesResponseCache
         )
     }()
-    lazy var moviesQueriesRepository: MoviesQueriesRepository = {
-       DefaultMoviesQueriesRepository(moviesQueriesPersistentStorage: moviesQueriesStorage)
+    lazy var moviesQueriesRepository: MoviesQueryRepository = {
+       DefaultMoviesQueryRepository(moviesQueriesPersistentStorage: moviesQueriesStorage)
     }()
     
     // MARK: - Use Cases
@@ -60,8 +59,8 @@ class DIContainer: ObservableObject {
         DefaultSearchMoviesUseCase(moviesRepository: moviesRepository, moviesQueriesRepository: moviesQueriesRepository)
     }()
     
-    lazy var moviesQueriesUseCase: FetchRecentMovieQueriesUseCase = {
-        FetchRecentMovieQueriesUseCase(requestValue: .init(maxCount: 10), moviesQueriesRepository: moviesQueriesRepository)
+    lazy var moviesQueriesUseCase: DefaultRecentMoviesQueryUseCase = {
+        DefaultRecentMoviesQueryUseCase(requestValue: .init(maxCount: 10), moviesQueriesRepository: moviesQueriesRepository)
     }()
 }
 
