@@ -8,5 +8,5 @@
 import Foundation
 
 enum NavigationDestination: Hashable {
-    case detail(movie: Movie, url: URL?)
+    case detail(movie: Movie)
 }
