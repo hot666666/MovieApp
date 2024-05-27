@@ -7,34 +7,30 @@
 
 import Foundation
 
-class MoviesHomeViewModel: ObservableObject{
+class MoviesHomeViewModel: ObservableObject {
     private var useCase: DefaultSearchMoviesUseCase
-    private var posterImageUrlProvider: PosterImageUrlProvider
-    
-    @Published var isLoading: Bool = false
-    @Published var isLoadingMore: Bool = false
-    
-    @Published var text: String = ""
-    @Published var isFocusedSearchBar: Bool = false
-    
-    @Published var movies = [Movie]()
-    
-    private var page = 1
-    private var totalPages = 1
+    private var posterImageUrlProvider: PosterImageUrlService
     
     init(container: DIContainer) {
         self.useCase = container.searchMoviesUseCase
-        self.posterImageUrlProvider = container.posterImageUrlProvider
+        self.posterImageUrlProvider = container.posterImageUrlService
     }
     
+    @Published var movies: [Movie] = []
+    @Published var searchText: String = ""
+    @Published var isSearchBarFocused: Bool = false
+    @Published var isLoading: Bool = false
+    @Published var isLoadingMore: Bool = false
+    
+    private var totalPages: Int = 0
+    private var page: Int = 0
+}
+
+extension MoviesHomeViewModel {
     @MainActor
-    func search(selectedQuery: String? = nil) async {
+    func search(searchText: String) async {
         defer {
             isLoading = false
-        }
-        
-        if let selectedQuery = selectedQuery {
-            text = selectedQuery
         }
         
         page = 1
@@ -42,7 +38,7 @@ class MoviesHomeViewModel: ObservableObject{
         do{
             isLoading = true
             await delaySeconds(secs: 0.5)
-            let res = try await useCase.execute(requestValue: SearchMoviesUseCaseRequestValue(query: MovieQuery(query: text), page: page))
+            let res = try await useCase.execute(requestValue: SearchMoviesUseCaseRequestValue(query: MovieQuery(query: searchText), page: page))
             page += 1
             totalPages = res.totalPages
             movies = res.movies
@@ -52,7 +48,7 @@ class MoviesHomeViewModel: ObservableObject{
     }
     
     @MainActor
-    func searchMore() async {
+    func searchMore(searchText: String) async {
         defer {
             isLoadingMore = false
         }
@@ -64,23 +60,27 @@ class MoviesHomeViewModel: ObservableObject{
         do {
             isLoadingMore = true
             await delaySeconds(secs: 0.5)
-            let res = try await useCase.execute(requestValue: SearchMoviesUseCaseRequestValue(query: MovieQuery(query: text), page: page))
+            let res = try await useCase.execute(requestValue: SearchMoviesUseCaseRequestValue(query: MovieQuery(query: searchText), page: page))
             page += 1
             movies.append(contentsOf: res.movies)
         } catch {
             print(error)
         }
     }
-    
-    func getURL(posterURL: String?, width: Int) -> URL? {
-        do {
-            if let posterURL = posterURL {
-                return try posterImageUrlProvider.getURL(posterURL: posterURL, width: width)
-            }
-        } catch {
-            print(error)
+}
+
+extension MoviesHomeViewModel {
+    func onSearchButtonClicked(query: String){
+        Task {
+            await search(searchText: query)
         }
-        
-        return nil
+    }
+
+    func onRecentQueryItemClicked(query: String){
+        isSearchBarFocused = false
+        searchText = query
+        Task {
+            await search(searchText: query)
+        }
     }
 }

@@ -9,59 +9,34 @@ import SwiftUI
 
 struct MoviesHomeView: View {
     @EnvironmentObject private var container: DIContainer
-    @StateObject var moviesHomeVM: MoviesHomeViewModel
-    @StateObject var movieQueriesListVM: MoviesQueryListViewModel
-    @FocusState private var isTextFieldFocused: Bool
+    @StateObject var vm: MoviesHomeViewModel
     
     var body: some View {
         NavigationStack(path: $container.navigationRouter.destinations) {
             VStack(spacing: 0){
                 HeaderView(title: "Movies")
                 
-                SearchBarView(moviesListVM: moviesHomeVM, defocus: defocus)
-                    .focused($isTextFieldFocused)
-                    .onSubmit {
-                        Task{
-                            await moviesHomeVM.search()
-                        }
-                    }
+                SearchBarView(text: $vm.searchText, isFocused: $vm.isSearchBarFocused, onSearchButtonClicked: vm.onSearchButtonClicked)
                 
-                BodyView()
-            }
-            .onChange(of: isTextFieldFocused){ _, newValue in
-                withAnimation{
-                    moviesHomeVM.isFocusedSearchBar = newValue
+                if vm.isSearchBarFocused {
+                    MoviesQueryListView(vm: .init(container: container), action: vm.onRecentQueryItemClicked)
+                } else {
+                    MoviesHomeListView(vm: vm)
                 }
-            }
-            .onAppear{
-                moviesHomeVM.isFocusedSearchBar = isTextFieldFocused
             }
             .navigationDestination(for: NavigationDestination.self){ dest in
                 switch dest {
-                case let .detail(movie, url):
-                    MoviesDetailsView(movie: movie, url: url)
+                case let .detail(movie):
+                    MoviesDetailView(movie: movie)
                 }
             }
         }
-    }
-    
-    @ViewBuilder
-    func BodyView() -> some View {
-        if moviesHomeVM.isFocusedSearchBar {
-            MoviesQueryListView(movieQueriesVM: movieQueriesListVM, movieListVM: moviesHomeVM, defocus: defocus)
-        } else {
-            MoviesListView(moviesHomeVM: moviesHomeVM)
-        }
-    }
-    
-    func defocus(){
-        isTextFieldFocused = false
     }
 }
 
 #Preview("MoviesHomeView") {
     let container: DIContainer = .init()
     
-    return MoviesHomeView(moviesHomeVM: .init(container: container), movieQueriesListVM: .init(container: container))
+    return MoviesHomeView(vm: .init(container: container))
         .environmentObject(container)
 }
