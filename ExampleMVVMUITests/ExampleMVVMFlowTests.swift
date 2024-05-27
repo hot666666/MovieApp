@@ -25,8 +25,8 @@ final class ExampleMVVMFlowTests: XCTestCase {
     func testSearchBar(){
         
         let app = XCUIApplication()
-        let searchMoviesStaticText = app.staticTexts["Search Movies"]
-        searchMoviesStaticText.tap()
-        app.buttons["Cancel"].tap()
+        
+        app.searchFields["Search"].tap()
+        app/*@START_MENU_TOKEN@*/.staticTexts["Cancel"]/*[[".buttons[\"Cancel\"].staticTexts[\"Cancel\"]",".staticTexts[\"Cancel\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
     }
 }
